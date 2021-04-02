@@ -8,7 +8,6 @@ from rich.syntax import Syntax
 DEBUG = False
 
 # Debug functions. Ignoring suggested
-
 for i in range(len(sys.argv)):
     if "--debug" in i:
         DEBUG = True
