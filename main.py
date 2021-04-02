@@ -1,3 +1,4 @@
+import json
 import os.path, os
 import sys
 import datetime
@@ -6,15 +7,22 @@ from rich.syntax import Syntax
 
 DEBUG = False
 
-def create_json(command, args):
+# Working here ~ Mr. RC
+def create_json(command, args=None, filename):
     json_struct = {
         "command": "",
-        "args": "args"
+        "args": tuple(),
+        "filename": ""
     }
     json_struct["command"]=command
-    json_struct["args"]=args
+    if args:
+        for i in args:
+            json_struct["args"][i]=args[i]
+    else:
+        json_struct["args"][0]=None
+    json_struct["filename"] = filename
+    return json_struct
 
-# Debug functions. Ignoring suggested
 for i in sys.argv:
     if "--debug" in i:
         DEBUG = True
