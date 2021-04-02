@@ -2,6 +2,10 @@ import os.path, os
 import sys
 import datetime
 
+from rich.console import Console
+from rich.syntax import Syntax
+
+
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 
 # making sure the .cachier directory is present
@@ -35,7 +39,9 @@ else:
     elif outputsLen == 1:
         with open(os.path.join(groupDir, outputsinDir[0])) as f:
             contents = f.read()
-            print(contents)
+            syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
+            console = Console()
+            console.print(syntax)
     else:
         print("WARN: Multiple commands were ran! Please choose one:")
         for f in outputsinDir:
@@ -45,7 +51,9 @@ else:
         print("")
         with open(os.path.join(groupDir, outputsinDir[opt])) as f:
             contents = f.read()
-            print(contents)
+            syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
+            console = Console()
+            console.print(syntax)
 
 
 
