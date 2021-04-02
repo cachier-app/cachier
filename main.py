@@ -26,3 +26,26 @@ if sys.argv[1] == 'run':
     #print('running "' + command + '". command name is: ' + commandName)
     # save output in groupDir/{commandName}.txt
     # save commandName, command args and file path to groupDir/{commandName}.json
+else:
+    command = sys.argv[1]
+    outputsinDir = [f for f in os.listdir(groupDir) if os.path.isfile(os.path.join(groupDir, f)) and f.startswith(command)]
+    outputsLen = len(outputsinDir)
+    if outputsLen == 0:
+        print("ERR: This command was never cached")
+    elif outputsLen == 1:
+        with open(os.path.join(groupDir, outputsinDir[0])) as f:
+            contents = f.read()
+            print(contents)
+    else:
+        print("WARN: Multiple commands were ran! Please choose one:")
+        for f in outputsinDir:
+            print(str(outputsinDir.index(f)) + " = " + f)
+        opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
+        opt = int(opt)
+        print("")
+        with open(os.path.join(groupDir, outputsinDir[opt])) as f:
+            contents = f.read()
+            print(contents)
+
+
+
