@@ -1,14 +1,21 @@
 import os.path, os
 import sys
 import datetime
-
 from rich.console import Console
 from rich.syntax import Syntax
 
 DEBUG = False
 
+def create_json(command, args):
+    json_struct = {
+        "command": "",
+        "args": "args"
+    }
+    json_struct["command"]=command
+    json_struct["args"]=args
+
 # Debug functions. Ignoring suggested
-for i in range(len(sys.argv)):
+for i in sys.argv:
     if "--debug" in i:
         DEBUG = True
         import logging
@@ -90,7 +97,7 @@ else:
                 logging.info(f"Done without errors.", extra={"markup": True})
     else:
         if DEBUG:
-            logging.warning(f"[red]Multiple commands requested.", extra={"markup": True})
+            logging.warning(f"[red]Multiple commands ran!", extra={"markup": True})
         print("WARN: Multiple commands were ran! Please choose one:")
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
