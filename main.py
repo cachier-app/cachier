@@ -1,4 +1,4 @@
-import json
+from logging import debug, warn
 import os.path, os
 import sys
 import datetime
@@ -7,19 +7,29 @@ from rich.syntax import Syntax
 
 DEBUG = False
 
+def log(message, type=None):
+    if not DEBUG:
+        return 
+    if type=='info':
+        log(message, extra={"markup": True})
+    elif type=='debug':
+        logging.debug(message, extra={"markup": True})
+    elif type=='warning':
+        logging.warning(message, extra={"markup": True})
+    elif type=='error':
+        logging.error(message, extra={"markup": True})
+    else:
+        log(message, extra={"markup": True})
+
 # Working here ~ Mr. RC
-def create_json(command, args=None, filename):
+def create_json(command, filename, args=None):
     json_struct = {
         "command": "",
-        "args": tuple(),
+        "args": "",
         "filename": ""
     }
     json_struct["command"]=command
-    if args:
-        for i in args:
-            json_struct["args"][i]=args[i]
-    else:
-        json_struct["args"][0]=None
+    json_struct["args"]=args
     json_struct["filename"] = filename
     return json_struct
 
@@ -40,72 +50,55 @@ for i in sys.argv:
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 
 # making sure the .cachier directory is present
-if DEBUG:
-    logging.info(f"Checking if {cachierDir} exits...")
+log(f"Checking if {cachierDir} exits...")
 if not os.path.exists(cachierDir):
-    if DEBUG:    
-        logging.info(f"Checking if {cachierDir} exits...")
+    
+    log(f"Checking if {cachierDir} exits...")
     print('WARN: "{}" is not present, creating it now'.format(cachierDir))
     os.makedirs(cachierDir)
 
 group = 'default'
 groupDir = '{}/{}'.format(cachierDir, group)
 # making sure the group directory exists in cachierDir
-if DEBUG:
-    logging.info(f"Checking if {groupDir} exits...")
+log(f"Checking if {groupDir} exits...")
 if not os.path.exists(groupDir):
     print('WARN: "{}" is not present, creating it now'.format(groupDir))
     os.makedirs(groupDir)
 
-if DEBUG:
-    logging.info(f"Checking arguments...")
+log(f"Checking arguments...")
 if sys.argv[1] == 'run':
-    if DEBUG:
-        logging.debug(f"[yellow]sys.argv[1] = run", extra={"markup": True})
+    log(f"[yellow]sys.argv[1] = run")
     # run command in sys.argv[2]
     command = sys.argv[2]
     commandName = command.split(" ")[0]
     outputFile = commandName + "_" + datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
-    if DEBUG:
-        logging.debug(f"[green]Running command: {command}", extra={"markup": True})
+    log(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
-    if DEBUG:
-        logging.debug(f"[green]Saved the ouput of the command to {groupDir}/{outputFile}.txt", extra={"markup": True})
-    #print('running "' + command + '". command name is: ' + commandName)
-    # save output in groupDir/{commandName}.txt
-    # save commandName, command args and file path to groupDir/{commandName}.json
+    log(f"[green]Saved the ouput of the command to {groupDir}/{outputFile}.txt", "debug")
+
 else:
     command = sys.argv[1]
-    if DEBUG:
-        logging.debug(f"[yellow]sys.argv[1] = {command}", extra={"markup": True})
+    log(f"[yellow]sys.argv[1] = {command}", 'debug')
     outputsinDir = [f for f in os.listdir(groupDir) if os.path.isfile(os.path.join(groupDir, f)) and f.startswith(command)]
     outputsLen = len(outputsinDir)
     if outputsLen == 0:
-        if DEBUG:
-            logging.error(f"[red]{command} was never cached but requested!", extra={"markup": True})
+        log(f"[red]{command} was never cached but requested!", 'error')
         print("ERR: This command was never cached")
-        if DEBUG:
-            logging.warning(f"[red]Exiting.", extra={"markup": True})
+        log(f"[red]Exiting.", 'error')
         exit()
     elif outputsLen == 1:
-        if DEBUG:
-            logging.info(f"[green]Cache found for command {command}.", extra={"markup": True})
+        log(f"[green]Cache found for command {command}.")
         with open(os.path.join(groupDir, outputsinDir[0])) as f:
-            if DEBUG:
-                logging.debug(f"[yellow]Reading cache for command {command}", extra={"markup": True})
+            log(f"[yellow]Reading cache for command {command}", "debug")
             contents = f.read()
-            if DEBUG:
-                logging.info(f"Setting up syntax highlighting for rich.syntax.Syntax function...", extra={"markup": True})
+            log(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
             syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
             console = Console()
-            if DEBUG:
-                logging.info(f"[yellow]Printing the code...", extra={"markup": True})
+            log(f"[yellow]Printing the code...")
             console.print(syntax)
-            if DEBUG:
-                logging.info(f"Done without errors.", extra={"markup": True})
+            log(f"Done without errors.")
     else:
-        if DEBUG:
-            logging.warning(f"[red]Multiple commands ran!", extra={"markup": True})
+        log(f"[red]Multiple commands ran!", 'warning')
         print("WARN: Multiple commands were ran! Please choose one:")
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
@@ -114,12 +107,9 @@ else:
         print("")
         with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
-             if DEBUG:
-                 logging.info(f"Setting up syntax highlighting for rich.syntax.Syntax function...", extra={"markup": True})
+             log(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
              syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
              console = Console()
-             if DEBUG:
-                 logging.info(f"[yellow]Printing the code...", extra={"markup": True})
+             log(f"[yellow]Printing the code...")
              console.print(syntax)
-             if DEBUG:
-                 logging.info(f"Done without errors.", extra={"markup": True})
+             log(f"Done without errors.")
