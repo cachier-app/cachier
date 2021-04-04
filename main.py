@@ -59,11 +59,13 @@ def help():
     print("\tcachier --clear-cache \t#For clearing all cache.")
     exit()
 
+logme("Checking the length of arguments")
 if len(sys.argv)<2:
+    logme("Calling help function")
     help()
 
 for i in sys.argv:
-    if "--debug" in i:
+    if i=="--debug":
         DEBUG = True
         import logging
         from rich.logging import RichHandler
@@ -73,11 +75,12 @@ for i in sys.argv:
             level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
         )
         log = logging.getLogger("rich")
-    elif '--clear-cache' in i:
+    elif i=='--clear-cache':
         logme("Cache clearing requested.")
         logme("Calling clear_cache function.", "debug")
         clear_cache()
     elif "-h" in i:
+        logme("Help requested. Calling help function.", "debug")
         help()
 
 # making sure the .cachier directory is present
