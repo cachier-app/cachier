@@ -102,12 +102,12 @@ else:
         print("WARN: Multiple caches found! Please choose one:")
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
+        opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
         try:
-            opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
+            opt = int(opt)
         except ValueError:
             log("Non integer input from user!", "error")
             print("Invalid input!")
-        opt = int(opt)
         print("")
         with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
