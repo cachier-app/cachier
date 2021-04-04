@@ -46,7 +46,7 @@ def help():
     print("run <command>: Command to run and cache.")
     print("<command>: Show cache of <command>.")
     print("--debug: Enable debug mode.")
-    print("--clear-cache, -cc: Clear all saved caches.")
+    print("--clear-cache: Clear all saved caches.")
     print("Example:")
     print("\tcachier run ls \t#For caching a command.")
     print("\tcachier ls \t#For showing cache of a command.")
@@ -64,7 +64,7 @@ for i in sys.argv:
             level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
         )
         log = logging.getLogger("rich")
-    if '--clear-cache' or '-cc' in i:
+    elif '--clear-cache' in i:
         logme("Cache clearing requested.")
         logme("Calling clear_cache function.", "debug")
         clear_cache()
