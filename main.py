@@ -176,8 +176,8 @@ else:
         logme("Multiple caches found! Please choose one:", 'warning')
         data = get_json_data(command)
         data_keys = list(data.keys())
-        filename = data_keys[0].replace("json", "txt")
-        args = data[data_keys[0]]
+        filename = data_keys[1].replace("json", "txt")
+        args = data[data_keys[1]]
         print(filename)
         print(args)
         for f in outputsinDir:
