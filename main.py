@@ -109,7 +109,7 @@ if sys.argv[1] == 'run':
     outputFile = commandName + "_" + current_time
     logme(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
-    print(create_json(command, f"{cachierDir}/{outputFile}.json", args=args))
+    print(create_json(commandName, f"{cachierDir}/{outputFile}.json", args=args))
     logme(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
