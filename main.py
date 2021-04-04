@@ -11,7 +11,7 @@ def log(message, type=None):
     if not DEBUG:
         return 
     if type=='info':
-        log(message, extra={"markup": True})
+        logging.log(message, extra={"markup": True})
     elif type=='debug':
         logging.debug(message, extra={"markup": True})
     elif type=='warning':
@@ -75,7 +75,6 @@ if sys.argv[1] == 'run':
     log(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
     log(f"[green]Saved the ouput of the command to {groupDir}/{outputFile}.txt", "debug")
-
 else:
     command = sys.argv[1]
     log(f"[yellow]sys.argv[1] = {command}", 'debug')
@@ -122,4 +121,4 @@ else:
         except IndexError:
             log("[red]Index error!", "error")
             log("[red]User gave a number that was not in the list!", "error")
-            print("\n[ERR] Invalid choice [ERR]")
+            print("[ERR] Invalid choice [ERR]")
