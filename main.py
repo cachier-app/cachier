@@ -107,7 +107,7 @@ else:
             opt = int(opt)
         except ValueError:
             log("Non integer input from user!", "error")
-            print("\n[ERR] Invalid input! [ERR]")
+            print("\n[ERR] Invalid input! [ERR]\n")
             exit()
         print("")
         with open(os.path.join(groupDir, outputsinDir[opt])) as f:
