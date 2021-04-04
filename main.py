@@ -176,10 +176,13 @@ else:
         logme("Multiple caches found! Please choose one:", 'warning')
         data = get_json_data(command)
         data_keys = list(data.keys())
-        filename = data_keys[1].replace("json", "txt")
-        args = data[data_keys[1]]
-        print(filename)
-        print(args)
+        n = 0
+        for key in data_keys:
+            print(f"{key} : {data[key]}")
+            filename = data_keys[n].replace("json", "txt")
+            args = data[data_keys[n]]
+            print(filename)
+            print(args)
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
         opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
