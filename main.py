@@ -57,6 +57,10 @@ def help():
     print("\tcachier ls \t#For showing cache of a command.")
     print("\tcachier run ls --debug \t#For caching a command with debug mode enabled.")
     print("\tcachier --clear-cache \t#For clearing all cache.")
+    exit()
+
+if len(sys.argv)<2:
+    help()
 
 for i in sys.argv:
     if "--debug" in i:
