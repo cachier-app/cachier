@@ -41,11 +41,15 @@ def create_json(command, filename, args=None):
 
 def help():
     print("Usage: cachier [options] [command]")
-    print("run <command>: Command to run and cache")
-    print("<command>: Show cache of <command>")
+    print("run <command>: Command to run and cache.")
+    print("<command>: Show cache of <command>.")
+    print("--debug: Enable debug mode.")
+    print("--clear-cache, -cc: Clear all saved caches.")
     print("Example:")
-    print("\tcachier run ls \t#For caching a command")
+    print("\tcachier run ls \t#For caching a command.")
     print("\tcachier ls \t#For showing cache of a command.")
+    print("\tcachier run ls --debug \t#For caching a command with debug mode enabled.")
+    print("\tcachier --clear-cache \t#For clearing all cache.")
 
 for i in sys.argv:
     if "--debug" in i:
@@ -57,8 +61,11 @@ for i in sys.argv:
         logging.basicConfig(
             level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
         )
-
         log = logging.getLogger("rich")
+    if '--clear-cache' or '-cc' in i:
+        log("Cache clearing requested.")
+        log("Calling clear_cache function.", "debug")
+        clear_cache()
 
 
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
