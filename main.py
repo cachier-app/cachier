@@ -32,7 +32,7 @@ def logme(message, type=None):
 
 def debuglog(message, logType="INFO"):
     if not DEBUG:
-        return 
+        return
     logging.debug(f"{message} ({logType.upper()})", extra={"markup": True})
 
 
@@ -86,14 +86,14 @@ def get_json_data(command):
     data_dict = {}
     for i in os.listdir(f"{groupDir}"):
         if i.endswith(".json") and i.startswith(command):
-            json_files.append(f"{groupDir}/{i.replace('json', 'txt')}")
-    
+            json_files.append(f"{groupDir}/{i}")
+
     for file in json_files:
         with open(file) as file:
             data = load(file)
             fname = "".join(data["args"])
             data_dict[data["filename"]] = fname
-    
+
     return data_dict
 
 
@@ -144,7 +144,8 @@ if sys.argv[1] == 'run':
     infojson = create_json(commandName, f"{groupDir}/{outputFile}.txt", args=args)
     debuglog("Calling writejson function...")
     writejson(infojson)
-    print(get_json_data(commandName))
+    data = list(get_json_data(commandName).keys())
+    print(data[0].replace("json", "txt"))
     debuglog(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
