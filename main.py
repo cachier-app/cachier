@@ -108,6 +108,7 @@ else:
         except ValueError:
             log("Non integer input from user!", "error")
             print("Invalid input!")
+            exit()
         print("")
         with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
