@@ -77,6 +77,8 @@ for i in sys.argv:
         logme("Cache clearing requested.")
         logme("Calling clear_cache function.", "debug")
         clear_cache()
+    elif "-h" in i:
+        help()
 
 # making sure the .cachier directory is present
 logme(f"Checking if {cachierDir} exits...")
