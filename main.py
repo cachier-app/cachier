@@ -103,6 +103,11 @@ if len(sys.argv)<2:
     debuglog("Calling help function")
     help()
 
+if len(sys.argv)==1 and sys.argv[1]=="run":
+    debuglog("User doesn't supplied argument with run command.")
+    print("[ERR] run command is missing an argument. [ERR]")
+    help()
+
 for i in sys.argv:
     if "--debug" in i:
         DEBUG = True
