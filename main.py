@@ -58,11 +58,14 @@ def create_json(command, filename, args=None):
     json_struct["command"]=command
     json_struct["args"]=args
     json_struct["filename"] = filename
+    debuglog(f"Work done successfully. Returning...", 'debug')
     return json_struct
 
 def writejson(json: dict):
+    debuglog(f"Opening file: {json['filename']} in write mode.", 'debug')
     file = open(json["filename"], "w")
     dump(json, file)
+    debuglog(f"Successfully dumped json into {file}.")
     file.close()
 
 def help():
@@ -97,7 +100,6 @@ for i in sys.argv:
 # making sure the .cachier directory is present
 debuglog(f"Checking if {cachierDir} exits...")
 if not os.path.exists(cachierDir):
-    
     debuglog(f"Checking if {cachierDir} exits...")
     logme('"{}" is not present, creating it now'.format(cachierDir), 'warning')
     os.makedirs(cachierDir)
@@ -118,10 +120,13 @@ if sys.argv[1] == 'run':
     commandName = command.split(" ")[0]
     args = command.split( )[1::]
     current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
+    debuglog(f"[green]Current time: {current_time}", 'info')
     outputFile = commandName + "_" + current_time
     debuglog(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
+    debuglog(f"[green]Calling create_json function...", 'debug')
     infojson = create_json(commandName, f"{groupDir}/{outputFile}.json", args=args)
+    debuglog("Calling writejson function...")
     writejson(infojson)
     debuglog(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
