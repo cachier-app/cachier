@@ -140,7 +140,7 @@ if sys.argv[1] == 'run':
     debuglog(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
     debuglog(f"[green]Calling create_json function...", 'debug')
-    infojson = create_json(commandName, f"{groupDir}/{outputFile}.json", args=args)
+    infojson = create_json(commandName, f"{groupDir}/{outputFile}.txt", args=args)
     debuglog("Calling writejson function...")
     writejson(infojson)
     print(get_json_data(commandName))
