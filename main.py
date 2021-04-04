@@ -122,7 +122,7 @@ if sys.argv[1] == 'run':
 else:
     command = sys.argv[1]
     logme(f"[yellow]sys.argv[1] = {command}", 'debug')
-    outputsinDir = [f for f in os.listdir(groupDir) if os.path.isfile(os.path.join(groupDir, f)) and f.startswith(command)]
+    outputsinDir = [f for f in os.listdir(groupDir) if os.path.isfile(os.path.join(groupDir, f)) and f.startswith(command) and f.endswith('.txt')]
     outputsLen = len(outputsinDir)
     if outputsLen == 0:
         logme(f"[red]{command} was never cached but requested!", 'error')
