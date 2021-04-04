@@ -6,6 +6,7 @@ from rich.console import Console
 from rich.syntax import Syntax
 
 DEBUG = False
+cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 
 def logme(message, type=None):
     if not DEBUG:
@@ -25,7 +26,7 @@ def logme(message, type=None):
 def clear_cache():
     global cachierDir
     dir = cachierDir
-    for file in os.listdir(dir):
+    for file in os.scandir(dir):
         os.remove(file.path)
     print("[INF] Cache for all commands was cleared successfully. [INF]")
 
@@ -67,9 +68,6 @@ for i in sys.argv:
         logme("Cache clearing requested.")
         logme("Calling clear_cache function.", "debug")
         clear_cache()
-
-
-cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 
 # making sure the .cachier directory is present
 logme(f"Checking if {cachierDir} exits...")
