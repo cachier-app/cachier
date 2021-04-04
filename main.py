@@ -78,7 +78,7 @@ def writejson(json: dict):
     debuglog(f"Opening file: {json['filename']} in write mode.", 'debug')
     file = open(json["filename"], "w")
     dump(json, file)
-    debuglog(f"Successfully dumped json into {file}.")
+    debuglog(f"Successfully dumped json into {json['filename']}.")
     file.close()
 
 def get_json_data(command):
@@ -91,7 +91,7 @@ def get_json_data(command):
     for file in json_files:
         with open(file) as file:
             data = load(file)
-            data_dict[data["filename"]] = "".join(data["args"])
+            data_dict[data["filename"]] = "".join(data["args"].replace("json", "txt"))
     
     return data_dict
 
