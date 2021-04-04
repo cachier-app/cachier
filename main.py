@@ -25,7 +25,7 @@ def logme(message, type=None):
 # Working here ~ Mr. RC
 def clear_cache():
     global cachierDir
-    dir = cachierDir
+    dir = cachierDir+'/default'
     for file in os.scandir(dir):
         os.remove(file.path)
     print("[INF] Cache for all commands was cleared successfully. [INF]")
