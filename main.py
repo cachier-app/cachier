@@ -108,7 +108,7 @@ else:
         with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
              log(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
-             syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
+             syntax = Syntax(contents, "bash", theme="monokai", line_numbers=True)
              console = Console()
              log(f"[yellow]Printing the code...")
              console.print(syntax)
