@@ -91,8 +91,7 @@ def get_json_data(command):
     for file in json_files:
         with open(file) as file:
             data = load(file)
-            print(data["filename"])
-            print("".join(data["args"]))
+            data_dict[data["filename"]] = "".join(data["args"])
     
     return data_dict
 
