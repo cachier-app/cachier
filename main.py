@@ -98,8 +98,8 @@ else:
             console.print(syntax)
             log(f"Done without errors.")
     else:
-        log(f"[red]Multiple commands ran!", 'warning')
-        print("WARN: Multiple commands were ran! Please choose one:")
+        log(f"[red]Multiple caches found!", 'warning')
+        print("WARN: Multiple caches found! Please choose one:")
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
         opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
