@@ -4,6 +4,7 @@ import sys
 import datetime
 from rich.console import Console
 from rich.syntax import Syntax
+from json import dump
 
 DEBUG = False
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
@@ -46,6 +47,11 @@ def create_json(command, filename, args=None):
     json_struct["filename"] = filename
     return json_struct
 
+def writejson(json: dict):
+    file = open(json["filename"], "w")
+    dump(json, file)
+    file.close()
+
 def help():
     print("Usage: cachier [options] [command]")
     print("run <command>: Command to run and cache.")
@@ -61,6 +67,7 @@ def help():
 
 logme("Checking the length of arguments")
 if len(sys.argv)<2:
+    logme("Length of arguments are less than 2.")
     logme("Calling help function")
     help()
 
@@ -109,7 +116,8 @@ if sys.argv[1] == 'run':
     outputFile = commandName + "_" + current_time
     logme(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
-    print(create_json(commandName, f"{cachierDir}/{outputFile}.json", args=args))
+    infojson = create_json(commandName, f"{cachierDir}/{outputFile}.json", args=args)
+    writejson(infojson)
     logme(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
