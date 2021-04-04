@@ -84,7 +84,7 @@ def writejson(json: dict):
 def get_json_data(command):
     json_files = []
     data_dict = {}
-    for i in os.listdir(f"{groupDir}/{group}"):
+    for i in os.listdir(f"{groupDir}"):
         if i.endswith(".json") and i.startswith(command):
             json_files.append(f"{groupDir}/{group}/{i}")
     
