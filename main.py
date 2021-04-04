@@ -23,6 +23,7 @@ def logme(message, type=None):
 
 # Working here ~ Mr. RC
 def clear_cache():
+    global cachierDir
     dir = cachierDir
     for file in os.listdir(dir):
         os.remove(file.path)
