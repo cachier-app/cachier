@@ -106,11 +106,12 @@ else:
         try:
             opt = int(opt)
         except ValueError:
-            log("Non integer input from user!", "error")
+            log("[red]Non integer input from user!", "error")
             print("\n[ERR] Invalid input! [ERR]\n")
             exit()
         print("")
-        with open(os.path.join(groupDir, outputsinDir[opt])) as f:
+        try:
+            with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
              log(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
              syntax = Syntax(contents, "bash", theme="monokai", line_numbers=True)
@@ -118,3 +119,7 @@ else:
              log(f"[yellow]Printing the code...")
              console.print(syntax)
              log(f"Done without errors.")
+        except IndexError:
+            log("[red]Index error!", "error")
+            log("[red]User gave a number that was not in the list!", "error")
+            print("\n[ERR] Invalid choice [ERR]")
