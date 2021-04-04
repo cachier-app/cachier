@@ -1,4 +1,3 @@
-from logging import debug, warn
 import os.path, os
 import sys
 import datetime
@@ -6,12 +5,19 @@ from rich.console import Console
 from rich.syntax import Syntax
 from json import dump
 
+import logging
+from rich.logging import RichHandler
+
+FORMAT = "%(message)s"
+logging.basicConfig(
+    level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+)
+log = logging.getLogger("rich")
+
 DEBUG = False
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 
-def debuglog(message, type=None):
-    if not DEBUG:
-        return 
+def logme(message, type=None):
     if type=='info':
         logging.info(message, extra={"markup": True})
     elif type=='debug':
@@ -23,6 +29,13 @@ def debuglog(message, type=None):
     else:
         logging.info(message, extra={"markup": True})
 
+
+def debuglog(message, logType="INFO"):
+    if not DEBUG:
+        return 
+    logging.debug(f"{message} ({logType.upper()})", extra={"markup": True})
+
+
 # Working here ~ Mr. RC
 def clear_cache():
     global cachierDir
@@ -32,7 +45,7 @@ def clear_cache():
         debuglog("Removing file {file.path}", "debug")
         os.remove(file.path)
         debuglog("Removed file {file.path}")
-    print("[INF] Cache for all commands was cleared successfully. [INF]")
+    logme("Cache for all commands was cleared successfully.")
     debuglog("Cache cleared succesfully.")
     exit(0)
 
@@ -74,14 +87,6 @@ if len(sys.argv)<2:
 for i in sys.argv:
     if "--debug" in i:
         DEBUG = True
-        import logging
-        from rich.logging import RichHandler
-
-        FORMAT = "%(message)s"
-        logging.basicConfig(
-            level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
-        )
-        log = logging.getLogger("rich")
     elif i=='--clear-cache':
         debuglog("Cache clearing requested.")
         debuglog("Calling clear_cache function.", "debug")
@@ -94,7 +99,7 @@ debuglog(f"Checking if {cachierDir} exits...")
 if not os.path.exists(cachierDir):
     
     debuglog(f"Checking if {cachierDir} exits...")
-    print('WARN: "{}" is not present, creating it now'.format(cachierDir))
+    logme('"{}" is not present, creating it now'.format(cachierDir), 'warning')
     os.makedirs(cachierDir)
 
 group = 'default'
@@ -102,7 +107,7 @@ groupDir = '{}/{}'.format(cachierDir, group)
 # making sure the group directory exists in cachierDir
 debuglog(f"Checking if {groupDir} exits...")
 if not os.path.exists(groupDir):
-    print('WARN: "{}" is not present, creating it now'.format(groupDir))
+    logme('"{}" is not present, creating it now'.format(groupDir), 'warning')
     os.makedirs(groupDir)
 
 debuglog(f"Checking arguments...")
@@ -126,7 +131,7 @@ else:
     outputsLen = len(outputsinDir)
     if outputsLen == 0:
         debuglog(f"[red]{command} was never cached but requested!", 'error')
-        print("ERR: This command was never cached")
+        logme("This command was never cached", 'error')
         debuglog(f"[red]Exiting.", 'error')
         exit()
     elif outputsLen == 1:
@@ -142,7 +147,7 @@ else:
             debuglog(f"Done without errors.")
     else:
         debuglog(f"[red]Multiple caches found!", 'warning')
-        print("WARN: Multiple caches found! Please choose one:")
+        logme("Multiple caches found! Please choose one:", 'warning')
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
         opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
@@ -150,7 +155,7 @@ else:
             opt = int(opt)
         except ValueError:
             debuglog("[red]Non integer input from user!", "error")
-            print("\n[ERR] Invalid input! [ERR]\n")
+            logme("Invalid input!", 'error')
             exit()
         print("")
         try:
@@ -165,4 +170,4 @@ else:
         except IndexError:
             debuglog("[red]Index error!", "error")
             debuglog("[red]User gave a number that was not in the list!", "error")
-            print("[ERR] Invalid choice [ERR]")
+            logme("Invalid choice", 'error')
