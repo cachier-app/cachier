@@ -33,6 +33,14 @@ def create_json(command, filename, args=None):
     json_struct["filename"] = filename
     return json_struct
 
+def help():
+    print("Usage: cachier [options] [command]")
+    print("run <command>: Command to run and cache")
+    print("<command>: Show cache of <command>")
+    print("Example:")
+    print("\tcachier run ls \t#For caching a command")
+    print("\tcachier ls \t#For showing cache of a command.")
+
 for i in sys.argv:
     if "--debug" in i:
         DEBUG = True
@@ -73,8 +81,8 @@ if sys.argv[1] == 'run':
     commandName = command.split(" ")[0]
     outputFile = commandName + "_" + datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
     logme(f"[green]Running command: {command}", 'debug')
-    os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
-    logme(f"[green]Saved the ouput of the command to {groupDir}/{outputFile}.txt", "debug")
+    os.system(f"{os.environ['SHELL']} -c {command} | tee \"{groupDir}/{outputFile}.txt\"")
+    logme(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
     logme(f"[yellow]sys.argv[1] = {command}", 'debug')
