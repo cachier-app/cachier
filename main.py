@@ -81,7 +81,7 @@ if sys.argv[1] == 'run':
     commandName = command.split(" ")[0]
     outputFile = commandName + "_" + datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
     logme(f"[green]Running command: {command}", 'debug')
-    os.system(f"{os.environ['SHELL']} -c {command} | tee \"{groupDir}/{outputFile}.txt\"")
+    os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
     logme(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
