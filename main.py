@@ -63,8 +63,8 @@ for i in sys.argv:
         )
         log = logging.getLogger("rich")
     if '--clear-cache' or '-cc' in i:
-        log("Cache clearing requested.")
-        log("Calling clear_cache function.", "debug")
+        logme("Cache clearing requested.")
+        logme("Calling clear_cache function.", "debug")
         clear_cache()
 
 
