@@ -22,6 +22,12 @@ def logme(message, type=None):
         logging.info(message, extra={"markup": True})
 
 # Working here ~ Mr. RC
+def clear_cache():
+    dir = cachierDir
+    for file in os.listdir(dir):
+        os.remove(file.path)
+    print("[INF] Cache for all commands was cleared successfully. [INF]")
+
 def create_json(command, filename, args=None):
     json_struct = {
         "command": "",
