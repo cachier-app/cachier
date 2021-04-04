@@ -9,7 +9,7 @@ from json import dump
 DEBUG = False
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 
-def logme(message, type=None):
+def debuglog(message, type=None):
     if not DEBUG:
         return 
     if type=='info':
@@ -27,13 +27,13 @@ def logme(message, type=None):
 def clear_cache():
     global cachierDir
     dir = cachierDir+'/default'
-    logme(f"Getting all the files from {dir}")
+    debuglog(f"Getting all the files from {dir}")
     for file in os.scandir(dir):
-        logme("Removing file {file.path}", "debug")
+        debuglog("Removing file {file.path}", "debug")
         os.remove(file.path)
-        logme("Removed file {file.path}")
+        debuglog("Removed file {file.path}")
     print("[INF] Cache for all commands was cleared successfully. [INF]")
-    logme("Cache cleared succesfully.")
+    debuglog("Cache cleared succesfully.")
     exit(0)
 
 def create_json(command, filename, args=None):
@@ -65,10 +65,10 @@ def help():
     print("\tcachier --clear-cache \t#For clearing all cache.")
     exit()
 
-logme("Checking the length of arguments")
+debuglog("Checking the length of arguments")
 if len(sys.argv)<2:
-    logme("Length of arguments are less than 2.")
-    logme("Calling help function")
+    debuglog("Length of arguments are less than 2.")
+    debuglog("Calling help function")
     help()
 
 for i in sys.argv:
@@ -83,65 +83,65 @@ for i in sys.argv:
         )
         log = logging.getLogger("rich")
     elif i=='--clear-cache':
-        logme("Cache clearing requested.")
-        logme("Calling clear_cache function.", "debug")
+        debuglog("Cache clearing requested.")
+        debuglog("Calling clear_cache function.", "debug")
         clear_cache()
     if "-h" in i:
         help()
 
 # making sure the .cachier directory is present
-logme(f"Checking if {cachierDir} exits...")
+debuglog(f"Checking if {cachierDir} exits...")
 if not os.path.exists(cachierDir):
     
-    logme(f"Checking if {cachierDir} exits...")
+    debuglog(f"Checking if {cachierDir} exits...")
     print('WARN: "{}" is not present, creating it now'.format(cachierDir))
     os.makedirs(cachierDir)
 
 group = 'default'
 groupDir = '{}/{}'.format(cachierDir, group)
 # making sure the group directory exists in cachierDir
-logme(f"Checking if {groupDir} exits...")
+debuglog(f"Checking if {groupDir} exits...")
 if not os.path.exists(groupDir):
     print('WARN: "{}" is not present, creating it now'.format(groupDir))
     os.makedirs(groupDir)
 
-logme(f"Checking arguments...")
+debuglog(f"Checking arguments...")
 if sys.argv[1] == 'run':
-    logme(f"[yellow]sys.argv[1] = run", "debug")
+    debuglog(f"[yellow]sys.argv[1] = run", "debug")
     # run command in sys.argv[2]
     command = sys.argv[2]
     commandName = command.split(" ")[0]
     args = command.split( )[1::]
     current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
     outputFile = commandName + "_" + current_time
-    logme(f"[green]Running command: {command}", 'debug')
+    debuglog(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
     infojson = create_json(commandName, f"{groupDir}/{outputFile}.json", args=args)
     writejson(infojson)
-    logme(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
+    debuglog(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
-    logme(f"[yellow]sys.argv[1] = {command}", 'debug')
+    debuglog(f"[yellow]sys.argv[1] = {command}", 'debug')
     outputsinDir = [f for f in os.listdir(groupDir) if os.path.isfile(os.path.join(groupDir, f)) and f.startswith(command) and f.endswith('.txt')]
     outputsLen = len(outputsinDir)
     if outputsLen == 0:
-        logme(f"[red]{command} was never cached but requested!", 'error')
+        debuglog(f"[red]{command} was never cached but requested!", 'error')
         print("ERR: This command was never cached")
-        logme(f"[red]Exiting.", 'error')
+        debuglog(f"[red]Exiting.", 'error')
         exit()
     elif outputsLen == 1:
-        logme(f"[green]Cache found for command {command}.")
+        debuglog(f"[green]Cache found for command {command}.")
         with open(os.path.join(groupDir, outputsinDir[0])) as f:
-            logme(f"[yellow]Reading cache for command {command}", "debug")
+            debuglog(f"[yellow]Reading cache for command {command}", "debug")
             contents = f.read()
-            logme(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
+            debuglog(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
             syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
             console = Console()
-            logme(f"[yellow]Printing the code...")
+            debuglog(f"[yellow]Printing the code...")
             console.print(syntax)
-            logme(f"Done without errors.")
+            debuglog(f"Done without errors.")
     else:
-        logme(f"[red]Multiple caches found!", 'warning')
+        debuglog(f"[red]Multiple caches found!", 'warning')
         print("WARN: Multiple caches found! Please choose one:")
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f)
@@ -149,20 +149,20 @@ else:
         try:
             opt = int(opt)
         except ValueError:
-            logme("[red]Non integer input from user!", "error")
+            debuglog("[red]Non integer input from user!", "error")
             print("\n[ERR] Invalid input! [ERR]\n")
             exit()
         print("")
         try:
             with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
-             logme(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
+             debuglog(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
              syntax = Syntax(contents, "bash", theme="monokai", line_numbers=True)
              console = Console()
-             logme(f"[yellow]Printing the code...")
+             debuglog(f"[yellow]Printing the code...")
              console.print(syntax)
-             logme(f"Done without errors.")
+             debuglog(f"Done without errors.")
         except IndexError:
-            logme("[red]Index error!", "error")
-            logme("[red]User gave a number that was not in the list!", "error")
+            debuglog("[red]Index error!", "error")
+            debuglog("[red]User gave a number that was not in the list!", "error")
             print("[ERR] Invalid choice [ERR]")
