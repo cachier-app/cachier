@@ -3,7 +3,7 @@ import sys
 import datetime
 from rich.console import Console
 from rich.syntax import Syntax
-from json import dump
+from json import dump, load
 
 import logging
 from rich.logging import RichHandler
@@ -37,6 +37,19 @@ def debuglog(message, logType="INFO"):
 
 
 # Working here ~ Mr. RC
+def help():
+    print("Usage: cachier [options] [command]")
+    print("run <command>: Command to run and cache.")
+    print("<command>: Show cache of <command>.")
+    print("--debug: Enable debug mode.")
+    print("--clear-cache: Clear all saved caches.")
+    print("Example:")
+    print("\tcachier run ls \t#For caching a command.")
+    print("\tcachier ls \t#For showing cache of a command.")
+    print("\tcachier run ls --debug \t#For caching a command with debug mode enabled.")
+    print("\tcachier --clear-cache \t#For clearing all cache.")
+    exit()
+
 def clear_cache():
     global cachierDir
     dir = cachierDir+'/default'
@@ -68,18 +81,20 @@ def writejson(json: dict):
     debuglog(f"Successfully dumped json into {file}.")
     file.close()
 
-def help():
-    print("Usage: cachier [options] [command]")
-    print("run <command>: Command to run and cache.")
-    print("<command>: Show cache of <command>.")
-    print("--debug: Enable debug mode.")
-    print("--clear-cache: Clear all saved caches.")
-    print("Example:")
-    print("\tcachier run ls \t#For caching a command.")
-    print("\tcachier ls \t#For showing cache of a command.")
-    print("\tcachier run ls --debug \t#For caching a command with debug mode enabled.")
-    print("\tcachier --clear-cache \t#For clearing all cache.")
-    exit()
+def get_json_data(command):
+    json_files = []
+    data_dict = {}
+    for i in os.listdir(f"{groupDir}/{group}"):
+        if i.endswith(".json") and i.startswith(command):
+            json_files.append(f"{groupDir}/{group}/{i}")
+    
+    for file in json_files:
+        with open(file) as file:
+            data = load(file)
+            data_dict[data["filename"]] = data_dict["".join(data["args"])]
+    
+    return data_dict
+
 
 debuglog("Checking the length of arguments")
 if len(sys.argv)<2:
