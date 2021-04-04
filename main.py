@@ -26,9 +26,13 @@ def logme(message, type=None):
 def clear_cache():
     global cachierDir
     dir = cachierDir+'/default'
+    logme(f"Getting all the files from {dir}")
     for file in os.scandir(dir):
+        logme("Removing file {file.path}", "debug")
         os.remove(file.path)
+        logme("Removed file {file.path}")
     print("[INF] Cache for all commands was cleared successfully. [INF]")
+    logme("Cache cleared succesfully.")
     exit(0)
 
 def create_json(command, filename, args=None):
