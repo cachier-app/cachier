@@ -143,6 +143,7 @@ if sys.argv[1] == 'run':
     infojson = create_json(commandName, f"{groupDir}/{outputFile}.json", args=args)
     debuglog("Calling writejson function...")
     writejson(infojson)
+    get_json_data(commandName)
     debuglog(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
