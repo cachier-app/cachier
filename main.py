@@ -29,6 +29,7 @@ def clear_cache():
     for file in os.scandir(dir):
         os.remove(file.path)
     print("[INF] Cache for all commands was cleared successfully. [INF]")
+    exit(0)
 
 def create_json(command, filename, args=None):
     json_struct = {
