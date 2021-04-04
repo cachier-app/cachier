@@ -80,7 +80,6 @@ for i in sys.argv:
         logme("Calling clear_cache function.", "debug")
         clear_cache()
     if "-h" in i:
-        logme("Help requested. Calling help function.", "debug")
         help()
 
 # making sure the .cachier directory is present
