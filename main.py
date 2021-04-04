@@ -65,7 +65,7 @@ if len(sys.argv)<2:
     help()
 
 for i in sys.argv:
-    if i=="--debug":
+    if "--debug" in i:
         DEBUG = True
         import logging
         from rich.logging import RichHandler
