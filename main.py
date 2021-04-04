@@ -86,7 +86,7 @@ def get_json_data(command):
     data_dict = {}
     for i in os.listdir(f"{groupDir}"):
         if i.endswith(".json") and i.startswith(command):
-            json_files.append(f"{groupDir}/{group}/{i}")
+            json_files.append(f"{groupDir}/{i}")
     
     for file in json_files:
         with open(file) as file:
