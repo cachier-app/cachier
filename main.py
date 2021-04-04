@@ -100,13 +100,16 @@ if not os.path.exists(groupDir):
 
 logme(f"Checking arguments...")
 if sys.argv[1] == 'run':
-    logme(f"[yellow]sys.argv[1] = run")
+    logme(f"[yellow]sys.argv[1] = run", "debug")
     # run command in sys.argv[2]
     command = sys.argv[2]
     commandName = command.split(" ")[0]
-    outputFile = commandName + "_" + datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
+    args = command.split( )[1::]
+    current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
+    outputFile = commandName + "_" + current_time
     logme(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
+    create_json(command, f"{cachierDir}/{outputFile}.json", args=args)
     logme(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
 else:
     command = sys.argv[1]
