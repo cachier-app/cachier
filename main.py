@@ -183,7 +183,12 @@ else:
             n+=1
         
         for f in outputsinDir:
-            print(str(outputsinDir.index(f)) + " = " + f + f" ({new_dict[f'{groupDir}/{f}']})")
+            cArguments = new_dict[f'{groupDir}/{f}']
+            cArgumentsString = ""
+            if cArguments.strip():
+                cArgumentsString = f" ({new_dict[f'{groupDir}/{f}']})"
+
+            print(str(outputsinDir.index(f)) + " = " + f + cArgumentsString)
         try:
             opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
         except KeyboardInterrupt:
