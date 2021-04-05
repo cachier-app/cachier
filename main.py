@@ -55,9 +55,9 @@ def clear_cache():
     dir = cachierDir+'/default'
     debuglog(f"Getting all the files from {dir}")
     for file in os.scandir(dir):
-        debuglog("Removing file {file.path}", "debug")
+        debuglog(f"Removing file {file.path}", "debug")
         os.remove(file.path)
-        debuglog("Removed file {file.path}")
+        debuglog(f"Removed file {file.path}")
     logme("Cache for all commands was cleared successfully.")
     debuglog("Cache cleared succesfully.")
     exit(0)
@@ -85,7 +85,9 @@ def get_json_data(command):
     json_files = []
     data_dict = {}
     for i in os.listdir(f"{groupDir}"):
+        debuglog(f"i = {i}")
         if i.endswith(".json") and i.startswith(command):
+            debuglog(f"json i = {i}")
             json_files.append(f"{groupDir}/{i}")
 
     for file in json_files:
@@ -111,11 +113,11 @@ if len(sys.argv)==1 and sys.argv[1]=="run":
 for i in sys.argv:
     if "--debug" in i:
         DEBUG = True
-    elif i=='--clear-cache':
+    if i=='--clear-cache':
         debuglog("Cache clearing requested.")
         debuglog("Calling clear_cache function.", "debug")
         clear_cache()
-    if "-h" in i:
+    if "-h" in i and sys.argv[sys.argv.index(i)-1]!="run":
         help()
 
 # making sure the .cachier directory is present
@@ -146,7 +148,7 @@ if sys.argv[1] == 'run':
     debuglog(f"[green]Running command: {command}", 'debug')
     os.system(f"{command} | tee \"{groupDir}/{outputFile}.txt\"")
     debuglog(f"[green]Calling create_json function...", 'debug')
-    infojson = create_json(commandName, f"{groupDir}/{outputFile}.txt", args=args)
+    infojson = create_json(commandName, f"{groupDir}/{outputFile}.json", args=args)
     debuglog("Calling writejson function...")
     writejson(infojson)
     debuglog(f"[green]Saved the output of the command to {groupDir}/{outputFile}.txt", "debug")
@@ -177,14 +179,12 @@ else:
         data = get_json_data(command)
         data_keys = list(data.keys())
         n = 0
+        new_dict = dict()
         for key in data_keys:
-            print(f"{key} : {data[key]}")
-            filename = data_keys[n].replace("json", "txt")
-            args = data[data_keys[n]]
-            print(filename)
-            print(args)
+            new_dict[data_keys[n].replace("json", "txt")] = data[data_keys[n]]
+            n+=1
         for f in outputsinDir:
-            print(str(outputsinDir.index(f)) + " = " + f)
+            print(str(outputsinDir.index(f)) + " = " + f + f" ({new_dict[f'{groupDir}/{f}']})")
         opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
         try:
             opt = int(opt)
