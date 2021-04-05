@@ -243,3 +243,4 @@ else:
             debuglog("[red]Index error!", "error")
             debuglog("[red]User gave a number that was not in the list!", "error")
             logme("Invalid choice", 'error')
+
