@@ -15,9 +15,10 @@ logging.basicConfig(
 log = logging.getLogger("rich")
 
 DEBUG = False
-cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 HIGHLIGHTING = True
-available_args = ["--debug", "--clear-cache", "--no-highlight"]
+group = 'default'
+cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
+available_args = ["--debug", "--clear-cache", "--no-highlight", "-g", "run"]
 
 def logme(message, type=None):
     if type=='info':
@@ -134,6 +135,9 @@ for i in sys.argv:
         clear_cache()
     if i=="--no-highlight":
         HIGHLIGHTING=False
+    if i=="-g":
+        n = sys.argv.index("-g")
+        group = sys.argv[n+1:n+2:]
     if i=="-h" and sys.argv[sys.argv.index(i)-1]!="run":
         help()
     if i=="--help" and sys.argv[sys.argv.index(i)-1]!="run":
@@ -146,7 +150,6 @@ if not os.path.exists(cachierDir):
     logme('"{}" is not present, creating it now'.format(cachierDir), 'warning')
     os.makedirs(cachierDir)
 
-group = 'default'
 groupDir = '{}/{}'.format(cachierDir, group)
 # making sure the group directory exists in cachierDir
 debuglog(f"Checking if {groupDir} exits...")
@@ -176,18 +179,18 @@ else:
     debuglog(f"[yellow]sys.argv[1] = {command}", 'debug')
     outputsinDir = [f for f in os.listdir(groupDir) if os.path.isfile(os.path.join(groupDir, f)) and f.startswith(command) and f.endswith('.txt')]
     outputsLen = len(outputsinDir)
-    if outputsLen == 0:
+    if outputsLen == 0 and command not in available_args:
         debuglog(f"[red]{command} was never cached but requested!", 'error')
         logme("This command was never cached", 'error')
         debuglog(f"[red]Exiting.", 'error')
         exit()
-    elif outputsLen == 1:
+    elif outputsLen == 1 and command not in available_args:
         debuglog(f"[green]Cache found for command {command}.")
         with open(os.path.join(groupDir, outputsinDir[0])) as f:
             debuglog(f"[yellow]Reading cache for command {command}", "debug")
             contents = f.read()
             highlight_code(contents)
-    else:
+    elif outputsLen<=2 and command not in available_args:
         debuglog(f"[red]Multiple caches found!", 'warning')
         logme("Multiple caches found! Please choose one:", 'warning')
         debuglog("Requesting json data for the command...")
