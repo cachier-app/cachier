@@ -137,7 +137,7 @@ for i in sys.argv:
         HIGHLIGHTING=False
     if i=="-g":
         n = sys.argv.index("-g")
-        group = sys.argv[n+1:n+2:]
+        group = "".join(sys.argv[n+1:n+2:])
     if i=="-h" and sys.argv[sys.argv.index(i)-1]!="run":
         help()
     if i=="--help" and sys.argv[sys.argv.index(i)-1]!="run":
