@@ -16,6 +16,8 @@ log = logging.getLogger("rich")
 
 DEBUG = False
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
+HIGHLIGHTING = True
+available_args = ["--debug", "--clear-cache", "--no-highlight"]
 
 def logme(message, type=None):
     if type=='info':
@@ -35,19 +37,19 @@ def debuglog(message, logType="INFO"):
         return
     logging.debug(f"{message} ({logType.upper()})", extra={"markup": True})
 
-
-# Working here ~ Mr. RC
 def help():
     print("Usage: cachier [options] [command]")
     print("run <command>: Command to run and cache.")
     print("<command>: Show cache of <command>.")
     print("--debug: Enable debug mode.")
     print("--clear-cache: Clear all saved caches.")
+    print("--no-highlight: Turn of syntax highlighting while printing cached data.")
     print("Example:")
     print("\tcachier run ls \t#For caching a command.")
     print("\tcachier ls \t#For showing cache of a command.")
     print("\tcachier run ls --debug \t#For caching a command with debug mode enabled.")
     print("\tcachier --clear-cache \t#For clearing all cache.")
+    print("\tcachier ls --no-highlight \t#For showing cache of a command.")
     exit()
 
 def clear_cache():
@@ -84,8 +86,9 @@ def writejson(json: dict):
 def get_json_data(command):
     json_files = []
     data_dict = {}
+    debuglog(f"Getting all files from {groupDir}")
     for i in os.listdir(f"{groupDir}"):
-        debuglog(f"i = {i}")
+        debuglog(f"Getting only json files for the {command} command")
         if i.endswith(".json") and i.startswith(command):
             debuglog(f"json i = {i}")
             json_files.append(f"{groupDir}/{i}")
@@ -93,11 +96,21 @@ def get_json_data(command):
     for file in json_files:
         with open(file) as file:
             data = load(file)
-            fname = "".join(data["args"])
+            fname = " ".join(data["args"])
             data_dict[data["filename"]] = fname
 
     return data_dict
 
+def highlight_code(contents):
+    if not HIGHLIGHTING:
+        print(contents)
+        return
+    debuglog(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
+    syntax = Syntax(contents, "bash", theme="monokai", line_numbers=True)
+    console = Console()
+    debuglog(f"[yellow]Printing the code...")
+    console.print(syntax)
+    debuglog(f"Done without errors.")
 
 debuglog("Checking the length of arguments")
 if len(sys.argv)<2:
@@ -111,13 +124,19 @@ if len(sys.argv)==1 and sys.argv[1]=="run":
     help()
 
 for i in sys.argv:
+    if i.startswith("-") and i not in available_args:
+        help()
     if "--debug" in i:
         DEBUG = True
     if i=='--clear-cache':
         debuglog("Cache clearing requested.")
         debuglog("Calling clear_cache function.", "debug")
         clear_cache()
-    if "-h" in i and sys.argv[sys.argv.index(i)-1]!="run":
+    if i=="--no-highlight":
+        HIGHLIGHTING=False
+    if i=="-h" and sys.argv[sys.argv.index(i)-1]!="run":
+        help()
+    if i=="--help" and sys.argv[sys.argv.index(i)-1]!="run":
         help()
 
 # making sure the .cachier directory is present
@@ -167,22 +186,20 @@ else:
         with open(os.path.join(groupDir, outputsinDir[0])) as f:
             debuglog(f"[yellow]Reading cache for command {command}", "debug")
             contents = f.read()
-            debuglog(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
-            syntax = Syntax(contents, "python", theme="monokai", line_numbers=True)
-            console = Console()
-            debuglog(f"[yellow]Printing the code...")
-            console.print(syntax)
-            debuglog(f"Done without errors.")
+            highlight_code(contents)
     else:
         debuglog(f"[red]Multiple caches found!", 'warning')
         logme("Multiple caches found! Please choose one:", 'warning')
+        debuglog("Requesting json data for the command...")
         data = get_json_data(command)
+        debuglog("Getting all the keys from json data")
         data_keys = list(data.keys())
         n = 0
         new_dict = dict()
         for key in data_keys:
             new_dict[data_keys[n].replace("json", "txt")] = data[data_keys[n]]
             n+=1
+        
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f + f" ({new_dict[f'{groupDir}/{f}']})")
         try:
@@ -202,12 +219,7 @@ else:
         try:
             with open(os.path.join(groupDir, outputsinDir[opt])) as f:
              contents = f.read()
-             debuglog(f"Setting up syntax highlighting for rich.syntax.Syntax function...")
-             syntax = Syntax(contents, "bash", theme="monokai", line_numbers=True)
-             console = Console()
-             debuglog(f"[yellow]Printing the code...")
-             console.print(syntax)
-             debuglog(f"Done without errors.")
+             highlight_code(contents)             
         except IndexError:
             debuglog("[red]Index error!", "error")
             debuglog("[red]User gave a number that was not in the list!", "error")
