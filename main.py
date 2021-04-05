@@ -185,7 +185,13 @@ else:
             n+=1
         for f in outputsinDir:
             print(str(outputsinDir.index(f)) + " = " + f + f" ({new_dict[f'{groupDir}/{f}']})")
-        opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
+        try:
+            opt = input(f"Choose: (0 to {len(outputsinDir) - 1}): ")
+        except KeyboardInterrupt:
+            print("")
+            logme("[red]Keyboard interrupt detected.", "warning")
+            logme("Exiting...", "info")
+            exit(0)
         try:
             opt = int(opt)
         except ValueError:
