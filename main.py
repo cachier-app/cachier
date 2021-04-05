@@ -4,15 +4,7 @@ import datetime
 from rich.console import Console
 from rich.syntax import Syntax
 from json import dump, load
-
-import logging
-from rich.logging import RichHandler
-
-FORMAT = "%(message)s"
-logging.basicConfig(
-    level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
-)
-log = logging.getLogger("rich")
+from utils.logger import Logger
 
 DEBUG = False
 HIGHLIGHTING = True
@@ -20,23 +12,9 @@ group = 'default'
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
 available_args = ["--debug", "--clear-cache", "--no-highlight", "-g", "run"]
 
-def logme(message, type=None):
-    if type=='info':
-        logging.info(message, extra={"markup": True})
-    elif type=='debug':
-        logging.debug(message, extra={"markup": True})
-    elif type=='warning':
-        logging.warning(message, extra={"markup": True})
-    elif type=='error':
-        logging.error(message, extra={"markup": True})
-    else:
-        logging.info(message, extra={"markup": True})
-
-
-def debuglog(message, logType="INFO"):
-    if not DEBUG:
-        return
-    logging.debug(f"{message} ({logType.upper()})", extra={"markup": True})
+logger = Logger(DEBUG)
+logme = logger.logme
+debuglog = logger.debuglog
 
 def help():
     print("Usage: cachier [options] [command]")
@@ -113,7 +91,8 @@ def highlight_code(contents):
     console.print(syntax)
     debuglog(f"Done without errors.")
 
-debuglog("Checking the length of arguments")
+# this will never run
+#debuglog("Checking the length of arguments")
 if len(sys.argv)<2:
     debuglog("Length of arguments are less than 2.")
     debuglog("Calling help function")
@@ -128,7 +107,7 @@ for i in sys.argv:
     if i.startswith("-") and i not in available_args:
         help()
     if "--debug" in i:
-        DEBUG = True
+        logger.debug = True
     if i=='--clear-cache':
         debuglog("Cache clearing requested.")
         debuglog("Calling clear_cache function.", "debug")
