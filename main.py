@@ -8,13 +8,14 @@ from rich.syntax import Syntax
 from json import dump, load
 import logging
 from rich.logging import RichHandler
+from requests import get
 
 FORMAT = "%(message)s"
 logging.basicConfig(
     level="NOTSET", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
 )
 log = logging.getLogger("rich")
-
+version = 1.0
 
 class Logger:
     def __init__(self, debugEnabled=False):
@@ -42,7 +43,7 @@ DEBUG = False
 HIGHLIGHTING = True
 group = 'default'
 cachierDir = '{}/.cachier'.format(os.path.expanduser("~"))
-available_args = ["--debug", "--clear-cache", "--no-highlight", "-g", "run"]
+available_args = ["--debug", "--clear-cache", "--no-highlight", "-g", "run", "--update"]
 
 logger = Logger(DEBUG)
 logme = logger.logme
@@ -55,13 +56,32 @@ def help():
     print("--debug: Enable debug mode.")
     print("--clear-cache: Clear all saved caches.")
     print("--no-highlight: Turn of syntax highlighting while printing cached data.")
+    print("--update: Update the tool.")
     print("Example:")
     print("\tcachier run ls \t#For caching a command.")
     print("\tcachier ls \t#For showing cache of a command.")
     print("\tcachier run ls --debug \t#For caching a command with debug mode enabled.")
     print("\tcachier --clear-cache \t#For clearing all cache.")
     print("\tcachier ls --no-highlight \t#For showing cache of a command.")
+    print("\tcachier --update")
     exit()
+    
+def update():
+    current_ver = get("https://raw.githubusercontent.com/cachier-app/cachier/main/.version").text
+    try:
+        if float(current_ver)!=version:
+            print("[INF] An update is available. [INF]")
+            os.system(f"cd {open(cachierDir+'/install_dir').read()}; git pull; ./setup.py")
+            os.system("clear")
+            print("[INF] The tool has been updated. Now you can rerun the tool to get started. [INF]")
+            exit()
+        elif float(current_ver)==version:
+            print("[INF] The tool is already up-to-date. [INF]")
+            exit(0)
+    except FileNotFoundError:
+        print("[ERR] Looks like you've not installed the tool with setup.py [ERR]")
+        print("[INF] To update the tool, you should run the setup.py again from the directory where you cloned cachier. [INF]")
+        exit(0)
 
 def clear_cache():
     global cachierDir
@@ -138,6 +158,8 @@ if len(sys.argv)==1 and sys.argv[1]=="run":
 for i in sys.argv:
     if i.startswith("-") and i not in available_args:
         help()
+    if i=="--update":
+        update()
     if "--debug" in i:
         logger.debug = True
     if i=='--clear-cache':
@@ -154,13 +176,6 @@ for i in sys.argv:
     if i=="--help" and sys.argv[sys.argv.index(i)-1]!="run":
         help()
 
-# making sure the .cachier directory is present
-debuglog(f"Checking if {cachierDir} exits...")
-if not os.path.exists(cachierDir):
-    debuglog(f"Checking if {cachierDir} exits...")
-    logme('"{}" is not present, creating it now'.format(cachierDir), 'warning')
-    os.makedirs(cachierDir)
-
 groupDir = '{}/{}'.format(cachierDir, group)
 # making sure the group directory exists in cachierDir
 debuglog(f"Checking if {groupDir} exits...")
@@ -175,7 +190,7 @@ if sys.argv[1] == 'run':
     command = sys.argv[2]
     commandName = command.split(" ")[0]
     args = command.split( )[1::]
-    current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
+    current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
     debuglog(f"[green]Current time: {current_time}", 'info')
     outputFile = commandName + "_" + current_time
     debuglog(f"[green]Running command: {command}", 'debug')
