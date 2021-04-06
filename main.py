@@ -175,7 +175,7 @@ if sys.argv[1] == 'run':
     command = sys.argv[2]
     commandName = command.split(" ")[0]
     args = command.split( )[1::]
-    current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M")
+    current_time = datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
     debuglog(f"[green]Current time: {current_time}", 'info')
     outputFile = commandName + "_" + current_time
     debuglog(f"[green]Running command: {command}", 'debug')
