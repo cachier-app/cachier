@@ -12,10 +12,7 @@ if not os.path.exists(cachierDir):
 
 print("[INF] Installing requirements [INF]")
 
-if isfile("/usr/bin/pip3"):
-    run("pip3 install -r requirements.txt")
-else:
-    run("pip3 install -r requirements.txt")
+run("python3 -m pip install -r requirements.txt")
 
 print("[INF] Copying file to /usr/bin/cachier [INF]")
 
