@@ -216,7 +216,7 @@ else:
             debuglog(f"[yellow]Reading cache for command {command}", "debug")
             contents = f.read()
             highlight_code(contents)
-    elif outputsLen<=2 and command not in available_args:
+    elif outputsLen>=2 and command not in available_args:
         debuglog(f"[red]Multiple caches found!", 'warning')
         logme("Multiple caches found! Please choose one:", 'warning')
         debuglog("Requesting json data for the command...")
@@ -258,4 +258,3 @@ else:
             debuglog("[red]Index error!", "error")
             debuglog("[red]User gave a number that was not in the list!", "error")
             logme("Invalid choice", 'error')
-
